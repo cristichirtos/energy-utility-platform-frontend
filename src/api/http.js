@@ -1,5 +1,6 @@
 import axios from "axios";
-import store from "../app/store";
+import { getCurrentUser } from "../app/store";
+
 export const BASE_URL = "http://localhost:3000";
 export const HTTP = axios.create({
   baseURL: BASE_URL,
@@ -15,10 +16,10 @@ export function encodeParams(p) {
 }
 
 export function AuthHeader() {
-  const user = store.getState().currentUser;
+  const user = getCurrentUser();
 
   if (user && user.access_token) {
-    return { ACCESS_TOKEN: user.access_token };
+    return { 'ACCESS_TOKEN': user.access_token };
   } else {
     return {};
   }

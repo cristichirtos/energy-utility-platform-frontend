@@ -1,9 +1,15 @@
-import { createStore } from "redux";
-import authReducer from "../reducers/auth";
+import Cookies from 'universal-cookie';
 
-const store = createStore(
-  authReducer,
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-);
+const cookies = new Cookies();
 
-export default store;
+export function loggedIn() {
+  return cookies.get('currentUser') != null;
+}
+
+export function getCurrentUser() {
+  return cookies.get('currentUser');
+}
+
+export function setCurrentUser(user) {
+  user == null ? cookies.remove('currentUser') : cookies.set('currentUser', user, { path: '/' });
+}

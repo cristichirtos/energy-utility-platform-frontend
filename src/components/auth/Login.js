@@ -25,22 +25,17 @@ function Login(props) {
   async function handleLogin(event) {
     event.preventDefault();
 
-    const role =  await AuthLogin(
+    const role = await AuthLogin(
       {
         username: username,
         password: password,
       }
     );
-      switch (role) {
-        case Role.Admin:
-          history.push("/admin/clients");
-          break;
-        case Role.Client:
-          history.push("/client");
-          break;
-        default:
-          break;
-      }
+  
+    if (role != null) {
+      console.log(role);
+      history.push('/');
+    }
   }
 
   return (

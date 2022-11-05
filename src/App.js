@@ -4,8 +4,9 @@ import { BrowserRouter, Route } from "react-router-dom";
 import { Redirect } from "react-router"
 import { Switch } from "react-router-dom";
 import NotFound from "./views/NotFound";
-import { useSelector } from "react-redux";
-import Home from "./views/home/Home"
+import { loggedIn, getCurrentUser } from "./app/store";
+import Client from "./views/client/Client"
+import Admin from "./views/admin/Admin"
 import Login from "./views/Login"
 import Register from "./views/Register"
 // import ProtectedRoute from './components/navigation/ProtectedRoute';
@@ -38,16 +39,18 @@ const theme = createTheme({
 
 
 function App() {
-  const loggedIn = useSelector((state) => state.loggedIn);
-  const role = useSelector((state) => state.currentUser.role);
+  // const loggedIn = loggedIn();
+  // const role = getCurrentUser().role;
   return (
     <ThemeProvider theme={theme}>
       
-      <BrowserRouter>
+      <BrowserRouter forceRefresh={true} >
       <NavigationBar/>
         <Switch>
           <Route exact path="/">
-            { loggedIn ? <Home /> : <Redirect to="/login" /> }
+            { loggedIn() ? 
+            (getCurrentUser().role == 'Client' ? <Client /> : <Admin />) : 
+            <Redirect to="/login" /> }
           </Route>
           <Route
             path="/login"

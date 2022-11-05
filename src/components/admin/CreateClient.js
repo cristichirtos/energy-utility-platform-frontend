@@ -6,8 +6,8 @@ import TextField from "@mui/material/TextField";
 import { makeStyles } from "@material-ui/core/styles";
 import { useState } from "react";
 import { useHistory } from "react-router-dom";
+import { loggedIn } from "../../app/store"
 import { Create } from '../../api/services/users';
-import { useSelector } from 'react-redux';
 import { AuthRegister } from '../../api/services/auth';
 
 const useStyles = makeStyles((theme) => ({
@@ -24,7 +24,7 @@ const CreateClient = () => {
     const [name, setName] = useState("");
     const [password, setPassword] = useState("");
     const [passwordConfirmation, setPasswordConfirmation] = useState("");
-    const isLoggedIn = useSelector((state) => state.loggedIn);
+    const isLoggedIn = loggedIn();
   
     async function save(event) {
       event.preventDefault();

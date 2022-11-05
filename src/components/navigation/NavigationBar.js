@@ -4,7 +4,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
-import { useSelector } from 'react-redux';
+import { loggedIn } from '../../app/store'
 import { AuthLogout } from '../../api/services/auth';
 import MenuIcon from '@mui/icons-material/Menu';
 import Box from '@mui/material/Box';
@@ -17,7 +17,6 @@ import { useHistory } from 'react-router';
 
 
 export default function NavigationBar() {
-    const isLoggedIn = useSelector((state)=>state.loggedIn);
     const history = useHistory();
 
     const menuItems = [
@@ -81,7 +80,7 @@ export default function NavigationBar() {
       {['left', 'right', 'top', 'bottom'].map((anchor) => (
         anchor === "left" ?
         <React.Fragment key={anchor}>
-          {isLoggedIn ? <IconButton 
+          {loggedIn() ? <IconButton 
             size="large"
             edge="start"
             color="inherit"
@@ -106,7 +105,7 @@ export default function NavigationBar() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Energy Utility Platform
           </Typography>
-          {isLoggedIn ? <Button color="inherit" onClick={() => { AuthLogout();history.push("/");}}>Logout</Button> : null}
+          {loggedIn() ? <Button color="inherit" onClick={() => { AuthLogout();history.push("/");}}>Logout</Button> : null}
         </Toolbar>
       </AppBar>
     </Box>
