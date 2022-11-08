@@ -53,7 +53,7 @@ function EditDevice({device}) {
     const res = await UpdateDevice(
       {
         id: device.id,
-        user_id: selectedOption.value,
+        user_id: selectedOption ? selectedOption.value : null,
         description: description,
         address: address,
         maximum_hourly_consumption: parseFloat(maximumHourlyConsumption)

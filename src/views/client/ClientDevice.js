@@ -2,13 +2,19 @@ import React from 'react'
 import { useState } from "react";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import Grid from "@material-ui/core/Grid";
 import { DeviceById } from "../../api/services/devices";
 import Chart from "react-apexcharts";
+import DatePicker from "react-datepicker";
+
+import "react-datepicker/dist/react-datepicker.css";
 
 const ClientDevice = () => {
   const location = useLocation();
   const [device, setDevice] = useState({});
   const [chartData, setChartData] = useState([]);
+  const [date, setDate] = useState(new Date());
+
   const chartOptions = {
     chart: {
       id: "energy-consumption-chart"
@@ -27,19 +33,27 @@ const ClientDevice = () => {
     async function fetchData() {
       const deviceData = await DeviceById(location.state.deviceId);
       setDevice(deviceData);
-      setChartData(deviceData.energy_consumption_entries.map(entry => entry.value));
+      const entries = deviceData.energy_consumption_entries.filter(entry => entry.timestamp.slice(0, 10) == date.toISOString().slice(0, 10))
+      setChartData(entries.map(entry => entry.value));
     }
     fetchData();
   }, [location.state.deviceId]);
 
+  function filterEntries(date) {
+    const entries = device.energy_consumption_entries.filter(entry => entry.timestamp.slice(0, 10) == date.toISOString().slice(0, 10))
+    setChartData(entries.map(entry => entry.value));
+    setDate(date);
+  }
+
   return (
     <div>
-      {`Device with description "${device.description}" consumption chart:`}
+      {`Select a date to display the consumption chart for device with description "${device.description}"`}
+      <DatePicker selected={date} onChange={(date) => filterEntries(date) } />
       <Chart
         options={chartOptions}
         series={chartSeries}
         type="line"
-        width='80%'
+        width='70%'
       />
     </div>
   )
