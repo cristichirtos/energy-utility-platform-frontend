@@ -1,5 +1,5 @@
 import React from "react";
-import CreateClient from "../components/admin/CreateClient";
+import CreateClient from "../../components/admin/CreateClient";
 import { Grid, makeStyles } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
@@ -8,13 +8,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Register() {
+function NewClient() {
   const classes = useStyles();
   return (
     <div className={classes.root}>
       <Grid item xs={12} md={9} lg={10}>
         <Grid container className={classes.presentation}>
-          <h1>Register</h1>
+          <h3>New client</h3>
         </Grid>
       </Grid>
       <Grid item xs={12} md={3} lg={2}>
@@ -24,4 +24,4 @@ function Register() {
   );
 }
 
-export default Register;
+export default NewClient;

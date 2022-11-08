@@ -5,23 +5,20 @@ import { Redirect } from "react-router"
 import { Switch } from "react-router-dom";
 import NotFound from "./views/NotFound";
 import { loggedIn, getCurrentUser } from "./app/store";
-import Client from "./views/client/Client"
-import Admin from "./views/admin/Admin"
-import Login from "./views/Login"
-import Register from "./views/Register"
-// import ProtectedRoute from './components/navigation/ProtectedRoute';
+import Client from "./views/client/Client";
+import Admin from "./views/admin/Admin";
+import Login from "./views/Login";
+import Register from "./views/Register";
+import ProtectedRoute from './components/navigation/ProtectedRoute';
 import NavigationBar from './components/navigation/NavigationBar';
-// import { Role } from './helpers/role';
-// import Client from './views/client/Client';
-// import AdminClients from './views/admin/AdminClients';
-// import AdminDevices from './views/admin/AdminDevices';
-// import AdminClient from './views/admin/AdminClient';
-// import AdminSensors from './views/admin/AdminSensors';
-// import AdminDevice from './views/admin/AdminDevice';
-// import AdminSensor from './views/admin/AdminSensor';
-// import AdminCreate from './views/admin/AdminCreate';
-// import ClientDevice from './views/client/ClientDevice';
-// import ClientSensor from './views/client/ClientSensor';
+import { Role } from './helpers/role';
+import User from './views/admin/User';
+import Users from './views/admin/Users';
+import Device from './views/admin/Device';
+import Devices from './views/admin/Devices';
+import NewClient from './views/admin/NewClient'
+import NewDevice from './views/admin/NewDevice'
+import ClientDevice from './views/client/ClientDevice';
 
 const theme = createTheme({
   palette: {
@@ -37,13 +34,9 @@ const theme = createTheme({
   },
 });
 
-
 function App() {
-  // const loggedIn = loggedIn();
-  // const role = getCurrentUser().role;
   return (
     <ThemeProvider theme={theme}>
-      
       <BrowserRouter forceRefresh={true} >
       <NavigationBar/>
         <Switch>
@@ -60,79 +53,55 @@ function App() {
             path="/register"
             component={Register}>
           </Route>
-          {/* 
           <ProtectedRoute
-            isAuthenticated={loggedIn}
-            role={role}
-            neededRole={Role.Admin}
-            path="/admin/devices"
-            component={AdminDevices}
-          />
-          <ProtectedRoute
-            isAuthenticated={loggedIn}
-            role={role}
-            neededRole={Role.Admin}
-            path="/admin/device"
-            component={AdminDevice}
-          />
-          <ProtectedRoute
-            isAuthenticated={loggedIn}
-            role={role}
-            neededRole={Role.Admin}
-            path="/admin/clients"
-            component={AdminClients}
-          />
-          <ProtectedRoute
-            isAuthenticated={loggedIn}
-            role={role}
-            neededRole={Role.Admin}
-            path="/admin/client"
-            component={AdminClient}
-          />
-          <ProtectedRoute
-            isAuthenticated={loggedIn}
-            role={role}
-            neededRole={Role.Admin}
-            path="/admin/sensors"
-            component={AdminSensors}
-          />
-          <ProtectedRoute
-            isAuthenticated={loggedIn}
-            role={role}
-            neededRole={Role.Admin}
-            path="/admin/sensor"
-            component={AdminSensor}
-          />
-          <ProtectedRoute
-            isAuthenticated={loggedIn}
-            role={role}
-            neededRole={Role.Admin}
-            path="/admin/create"
-            component={AdminCreate}
-          />
-
-
-          <ProtectedRoute
-            isAuthenticated={loggedIn}
-            role={role}
+            isAuthenticated={loggedIn()}
+            role={loggedIn() ? getCurrentUser().role : null}
             neededRole={Role.Client}
             path="/client/device"
             component={ClientDevice}
           />
           <ProtectedRoute
-            isAuthenticated={loggedIn}
-            role={role}
-            neededRole={Role.Client}
-            path="/client/sensor"
-            component={ClientSensor}
+            isAuthenticated={loggedIn()}
+            role={loggedIn() ? getCurrentUser().role : null}
+            neededRole={Role.Admin}
+            path="/admin/users"
+            component={Users}
           />
           <ProtectedRoute
-            isAuthenticated={loggedIn}
-            role={role}
-            neededRole={Role.Client}
-            path="/client"
-            component={Client}
-          /> */}
+            isAuthenticated={loggedIn()}
+            role={loggedIn() ? getCurrentUser().role : null}
+            neededRole={Role.Admin}
+            path="/admin/new-user"
+            component={NewClient}
+          />
+          <ProtectedRoute
+            isAuthenticated={loggedIn()}
+            role={loggedIn() ? getCurrentUser().role : null}
+            neededRole={Role.Admin}
+            path="/admin/user"
+            component={User}
+          />
+          <ProtectedRoute
+            isAuthenticated={loggedIn()}
+            role={loggedIn() ? getCurrentUser().role : null}
+            neededRole={Role.Admin}
+            path="/admin/devices"
+            component={Devices}
+          />
+          <ProtectedRoute
+            isAuthenticated={loggedIn()}
+            role={loggedIn() ? getCurrentUser().role : null}
+            neededRole={Role.Admin}
+            path="/admin/device"
+            component={Device}
+          />
+          <ProtectedRoute
+            isAuthenticated={loggedIn()}
+            role={loggedIn() ? getCurrentUser().role : null}
+            neededRole={Role.Admin}
+            path="/admin/new-device"
+            component={NewDevice}
+          />
           <Route component={NotFound}></Route>
         </Switch>
       </BrowserRouter>

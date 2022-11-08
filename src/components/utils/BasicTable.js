@@ -1,42 +1,153 @@
-import * as React from 'react';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import { AllDevicesForCurrentUser } from '../../api/services/devices'
+/* eslint-disable no-lone-blocks */
+import React from 'react'
+import { makeStyles } from "@material-ui/core/styles";
+import Paper from "@material-ui/core/Paper";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableContainer from "@material-ui/core/TableContainer";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import { useEffect } from "react";
+import { useState } from "react";
+import { Grid } from "@material-ui/core";
+import { useHistory } from "react-router-dom";
+import { AllDevicesForCurrentUser } from '../../api/services/devices';
+import { AllUsers } from '../../api/services/users';
+import { getCurrentUser } from '../../app/store'
 
-const rows = AllDevicesForCurrentUser().content;
+let columns = [];
 
-export default function BasicTable() {
-  console.log(rows);
+const columnsUsers = [
+  { id: "id", label: "Id", minWidth: 170 },
+  { id: "name", label: "Name", minWidth: 170 },
+  { id: "username", label: "Username", minWidth: 170 },
+  { id: "role", label: "Role", minWidth: 170 }
+];
+
+const columnsDevicesAdmin = [
+  { id: "id", label: "Id", minWidth: 170 },
+  { id: "description", label: "Description", minWidth: 170 },
+  { id: "address", label: "Address", minWidth: 170 },
+  { id: "user_username", label: "Associated user", minWidth: 170 },
+  { id: "maximum_hourly_consumption", label: "Maximum hourly consumption", minWidth: 170 }
+];
+
+const columnsDevicesClient = [
+  { id: "id", label: "Id", minWidth: 170 },
+  { id: "description", label: "Description", minWidth: 170 },
+  { id: "address", label: "Address", minWidth: 170 },
+  { id: "maximum_hourly_consumption", label: "Maximum hourly consumption", minWidth: 170 }
+];
+
+const useStyles = makeStyles({
+  root: {
+    width: "100%",
+  },
+  container: {
+    maxHeight: 440,
+  },
+});
+  
+
+function BasicTable({entity}) {
+  const classes = useStyles();
+  const history = useHistory();
+  const [items, setItems] = useState([]);
+  const role = getCurrentUser().role;
+
+  useEffect(() => {
+    async function fetchItems() {
+      switch (entity) {
+        case 'users':
+          setItems(await AllUsers());
+          break;
+        case 'devices':
+          setItems(await AllDevicesForCurrentUser());
+          break;
+      }
+    }
+    setHeader();
+    fetchItems();
+  }, [entity]);
+
+  const setHeader = () =>{
+    switch (entity) {
+      case 'users':
+        columns = columnsUsers;
+        break;
+      case 'devices':
+        if (getCurrentUser().role == 'Admin')
+          columns = columnsDevicesAdmin;
+        else
+          columns = columnsDevicesClient;
+        break;
+    }
+  };
+
   return (
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell>Device description</TableCell>
-            <TableCell align="right">Address</TableCell>
-            <TableCell align="right">Maximum hourly consumption</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row) => (
-            <TableRow
-              key={row.description}
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">
-                {row.description}
-              </TableCell>
-              <TableCell align="right">{row.address}</TableCell>
-              <TableCell align="right">{row.maximum_hourly_consumption}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  );
+    <Grid container>{items ? 
+      <Grid item xs={12}>
+        <Paper className={classes.root}>
+          <TableContainer className={classes.container}>
+            <Table stickyHeader aria-label="sticky table">
+              <TableHead>
+                <TableRow>
+                  {columns.map((column) => (
+                    <TableCell
+                      key={column.id}
+                      align={column.align}
+                      style={{ minWidth: column.minWidth }}
+                    >
+                      {column.label}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {items
+                  .map((item) => {
+                    return (
+                      <TableRow
+                        hover
+                        role="checkbox"
+                        tabIndex={-1}
+                        key={item.id}
+                        onClick={() => {
+                          switch (entity) {
+                            case 'users':
+                              history.push({
+                                pathname: `/admin/user`,
+                                state: { userId: item.id },
+                              });
+                              break;
+                            case 'devices':
+                              history.push({
+                                pathname: `/${role.toLowerCase()}/device`,
+                                state: { deviceId: item.id },
+                              });
+                              break;
+                          }
+                        }}
+                      >
+                        {columns.map((column) => {
+                          return (
+                            <TableCell key={column.id} align={column.align}>
+                              {item[column.id]}
+                            </TableCell>
+                          );
+                        })}
+                      </TableRow>
+                    );
+                  })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
+      </Grid>
+: <p>Loading table...</p>}
+    </Grid>
+  )
 }
+
+export default BasicTable

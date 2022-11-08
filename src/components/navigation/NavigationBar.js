@@ -4,7 +4,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
-import { loggedIn } from '../../app/store'
+import { getCurrentUser, loggedIn } from '../../app/store'
 import { AuthLogout } from '../../api/services/auth';
 import MenuIcon from '@mui/icons-material/Menu';
 import Box from '@mui/material/Box';
@@ -17,70 +17,76 @@ import { useHistory } from 'react-router';
 
 
 export default function NavigationBar() {
-    const history = useHistory();
+  const history = useHistory();
 
-    const menuItems = [
-      {
-        text: "Clients",
-        icon: null,
-        path: "/admin/clients",
-      },
-      {
-        text: "Devices",
-        icon: null,
-        path: "/admin/devices",
-      },
-    ];
+  const menuItems = [
+    {
+      text: "Users",
+      icon: null,
+      path: "/admin/users",
+    },
+    {
+      text: "Devices",
+      icon: null,
+      path: "/admin/devices",
+    },
+  ];
 
-    const [state, setState] = React.useState({
-      top: false,
-      left: false,
-      bottom: false,
-      right: false,
-    });
-  
-    const toggleDrawer = (anchor, open) => (event) => {
-      if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-        return;
-      }
-  
-      setState({ ...state, [anchor]: open });
-    };
+  const [state, setState] = React.useState({
+    top: false,
+    left: false,
+    bottom: false,
+    right: false,
+  });
 
-    const list = (anchor) => (
-      <Box
-        sx={{ width: anchor === 'top' || anchor === 'bottom' ? 'auto' : 250 }}
-        role="presentation"
-        onClick={toggleDrawer(anchor, false)}
-        onKeyDown={toggleDrawer(anchor, false)}
-      >
-        <List>
-          {menuItems.map((item) => (
-            <ListItem
-              button
-              key={item.text}
-              onClick={() => {
-                history.push(item.path);
-              }}
-            >
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.text} />
-            </ListItem>
-          ))}
-        </List>
-      </Box>
-    );
-  
+  const toggleDrawer = (anchor, open) => (event) => {
+    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+      return;
+    }
+
+    setState({ ...state, [anchor]: open });
+  };
+
+  const list = (anchor) => (
+    <Box
+      sx={{ width: anchor === 'top' || anchor === 'bottom' ? 'auto' : 250 }}
+      role="presentation"
+      onClick={toggleDrawer(anchor, false)}
+      onKeyDown={toggleDrawer(anchor, false)}
+    >
+      <List>
+        {menuItems.map((item) => (
+          <ListItem
+            button
+            key={item.text}
+            onClick={() => {
+              history.push(item.path);
+            }}
+          >
+            <ListItemIcon>{item.icon}</ListItemIcon>
+            <ListItemText primary={item.text} />
+          </ListItem>
+        ))}
+      </List>
+    </Box>
+  );
+
+  async function logout() {
+    const response = await AuthLogout();
+    if (response == true) {
+      history.push('/');
+    }
+  }
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
-
         <Toolbar>
         <div>
-      {['left', 'right', 'top', 'bottom'].map((anchor) => (
-        anchor === "left" ?
+          {['left', 'right', 'top', 'bottom'].map((anchor) => (
+           anchor === "left" ?
         <React.Fragment key={anchor}>
-          {loggedIn() ? <IconButton 
+          {loggedIn() && getCurrentUser().role == 'Admin' ? <IconButton 
             size="large"
             edge="start"
             color="inherit"
@@ -105,7 +111,7 @@ export default function NavigationBar() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Energy Utility Platform
           </Typography>
-          {loggedIn() ? <Button color="inherit" onClick={() => { AuthLogout();history.push("/");}}>Logout</Button> : null}
+          {loggedIn() ? <Button color="inherit" onClick={logout}>Logout</Button> : null}
         </Toolbar>
       </AppBar>
     </Box>

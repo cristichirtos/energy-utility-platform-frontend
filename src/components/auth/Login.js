@@ -7,7 +7,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import { useState } from "react";
 import { withRouter } from "react-router-dom";
 import { useHistory } from "react-router-dom";
-import { Role } from "../../helpers/role";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -15,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Login(props) {
+function Login() {
   const classes = useStyles();
   const history = useHistory();
   const [username, setUsername] = useState("");
@@ -33,7 +32,6 @@ function Login(props) {
     );
   
     if (role != null) {
-      console.log(role);
       history.push('/');
     }
   }

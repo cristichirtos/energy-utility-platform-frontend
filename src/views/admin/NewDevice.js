@@ -1,5 +1,5 @@
 import React from "react";
-import CreateClient from "../components/admin/CreateClient";
+import CreateDevice from "../../components/admin/CreateDevice";
 import { Grid, makeStyles } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
@@ -8,20 +8,20 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Register() {
+function NewDevice() {
   const classes = useStyles();
   return (
     <div className={classes.root}>
       <Grid item xs={12} md={9} lg={10}>
         <Grid container className={classes.presentation}>
-          <h1>Register</h1>
+          <h3>New device</h3>
         </Grid>
       </Grid>
       <Grid item xs={12} md={3} lg={2}>
-        <CreateClient />
+        <CreateDevice />
       </Grid>
     </div>
   );
 }
 
-export default Register;
+export default NewDevice;
