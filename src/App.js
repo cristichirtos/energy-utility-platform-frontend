@@ -19,6 +19,9 @@ import Devices from './views/admin/Devices';
 import NewClient from './views/admin/NewClient'
 import NewDevice from './views/admin/NewDevice'
 import ClientDevice from './views/client/ClientDevice';
+import { useEffect } from 'react';
+import { ReactNotifications, Store } from 'react-notifications-component'
+import 'react-notifications-component/dist/theme.css'
 
 const theme = createTheme({
   palette: {
@@ -35,9 +38,48 @@ const theme = createTheme({
 });
 
 function App() {
+  useEffect(() => {
+    if (loggedIn()) {
+      const ws = new WebSocket('ws://energy-utility-plaform.herokuapp.com/cable');
+      ws.onopen = () => {
+        const msg = {
+          command: 'subscribe',
+          identifier: JSON.stringify({
+            id: getCurrentUser().id,
+            channel: 'NotificationsChannel'
+          })
+        };
+        ws.send(JSON.stringify(msg));
+      }
+      ws.onmessage = function (event) {
+        const data = JSON.parse(event.data);
+        try {
+          if (data.message.body) {
+            Store.addNotification({
+              title: "Energy consumption alert",
+              message: data.message.body,
+              type: "warning",
+              insert: "top",
+              container: "top-right",
+              animationIn: ["animate__animated", "animate__fadeIn"],
+              animationOut: ["animate__animated", "animate__fadeOut"],
+              dismiss: {
+                duration: 3000,
+                onScreen: true
+              }
+            });
+          }
+        } catch {
+          //do nothing
+        }
+      }
+    }
+  }, []);
+
   return (
     <ThemeProvider theme={theme}>
       <BrowserRouter forceRefresh={true} >
+      <ReactNotifications />
       <NavigationBar/>
         <Switch>
           <Route exact path="/">

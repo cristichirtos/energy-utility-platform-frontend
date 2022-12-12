@@ -1,7 +1,7 @@
 import axios from "axios";
 import { getCurrentUser } from "../app/store";
 
-export const BASE_URL = "http://localhost:3000";
+export const BASE_URL = "https://energy-utility-plaform.herokuapp.com";
 export const HTTP = axios.create({
   baseURL: BASE_URL,
 });
